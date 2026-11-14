@@ -1,0 +1,10 @@
+# Library Manager - Reflection Questions
+
+### 1. Why is `LibraryItem` abstract, and what happens if `DVD` forgets to write `late_fee()`?
+`LibraryItem` is an abstract base class because a generic "library item" does not exist on its own in the library—every real item must be a specific type (`Book`, `Magazine`, or `DVD`) with its own late-fee rate. Marking `late_fee()` as an `@abstractmethod` enforces a contract across all subclasses so polymorphic code can safely call `item.late_fee(days)` on any item. If `DVD` forgets to implement `late_fee()`, Python treats `DVD` as an incomplete abstract class and raises a `TypeError` (`Can't instantiate abstract class DVD without an implementation for abstract method 'late_fee'`) the moment you try to create a `DVD` object.
+
+### 2. What happens when you read `item.__available` from outside the class, and why do we use `is_available()` instead?
+Attempting to read `item.__available` directly from outside the class raises an `AttributeError` (`'Book' object has no attribute '__available'`) because Python name-mangles double-underscore attributes to `_LibraryItem__available` to prevent direct external access. We use `is_available()` (alongside `mark_borrowed()` and `mark_returned()`) to enforce encapsulation, allowing outside code to check availability safely without being able to modify or corrupt the internal state directly.
+
+### 3. What is the difference between `LibraryItem.total_items` and `self.title`?
+`LibraryItem.total_items` is a class attribute stored on the `LibraryItem` class itself and shared across all instances of `LibraryItem` and its subclasses to track the total count of items created. In contrast, `self.title` is an instance attribute bound to each individual object (`self`), meaning every `Book`, `Magazine`, or `DVD` stores its own separate title without affecting any other item's title.
